@@ -1,6 +1,7 @@
 # s3plz 
 
-A polite interface for sending python objects to and from Amazon S3.
+A polite, minimal interface for sending python objects 
+to and from Amazon S3.
 
 ## Installation
 
@@ -10,9 +11,12 @@ pip install s3plz
 
 ## Tests
 
-Assume you have set `AWS_ACCESS_KEY_ID` and 
-`AWS_ACCESS_KEY_SECRET` set as environmental variables and have access to an already-created 
-bucket.
+To run tests, you must first set these 
+environmental variabels:
+
+export AWS_ACCESS_KEY_ID='fdsaf'
+export AWS_ACCESS_KEY_SECRET='fdsaf'
+export S3PLZ_TEST_BUCKET='s3://my-cool-bucket'
 
 ```
 nosetests
@@ -24,7 +28,7 @@ nosetests
 
 import s3plz
 
-# return an `s3plz.S3` object with 
+# Return an `s3plz.S3` object with 
 # methods for sending objects
 # to and from Amazon S3.
 
@@ -37,6 +41,8 @@ plz = s3plz.connect('s3://asteroid',
 
 # You can also set `AWS_ACCESS_KEY_ID` and 
 # `AWS_ACCESS_KEY_SECRET` as environmental variables
+# instead of passing `key` and `secret` to `s3plz.connect`
+
 
 
 # Serialize an object, format its
@@ -50,7 +56,7 @@ filepath = 'test/{key}.json.gz'
 fp = plz.put(obj, filepath, **obj)
 print fp
 
-# >>> 's3://my-bucket/test/value.json.gz'
+# >>> 's3://asteroid/test/value.json.gz'
 # you can now fetch this object with its filepath
 
 obj =  plz.get(fp)
@@ -64,8 +70,8 @@ assert(obj == obj)
 
 `s3plz` will attempt to format your filepath
 for you given arbitary `**kwargs` passed to 
-any method. You also have access to utility values 
-accessed by the "@" operator.
+any method. You also have access to UTC 
+time via the "@" operator.
 
 These include:
 
@@ -80,8 +86,6 @@ These include:
 - '@date_slug' : "2014-01-14,
 - '@datetime_slug' : "2013-12-12-06-08-52"
 - '@uid': 'dasfas-23r32-sad-3sadf-sdf"
-
-**NOTE** ALL TIME VARIABLES ARE CURRENT UTC.
 
 For instance,
 
@@ -103,7 +107,7 @@ print fp
 ### Serialization
 
 By default, you can serialize / deserialize objects to / from `json.gz`, 
-`json`, or `gz` (set with `serialize` via `s3plz.connect`. However, you can also inherit from the core `s3plz.S3` class and overwrite the `serialize` and `deserialize` methods.
+`json`, `gz`, or `zip` (set with `serialize` via `s3plz.connect`). However, you can also inherit from the core `s3plz.S3` class and overwrite the `serialize` and `deserialize` methods.
 
 ```python
 
@@ -112,7 +116,7 @@ from s3plz import S3
 class SqlAlchemyToS3(S3):
 
 	def serialize(self, obj):
-		return "Do something hipster here."
+		return "Do something here."
 
 	def deserialize(self, string):
 		return "Undo it."
