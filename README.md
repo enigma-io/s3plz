@@ -20,6 +20,8 @@ export AWS_ACCESS_KEY_SECRET='fdsaf'
 export S3PLZ_TEST_BUCKET='s3://my-cool-bucket'
 
 ```
+and then run:
+```
 nosetests
 ```
 
