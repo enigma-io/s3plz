@@ -11,7 +11,8 @@ pip install s3pyo
 ## Tests
 
 **NOTE** very basic for now. They also assume you have set `AWS_ACCESS_KEY_ID` and 
-`AWS_ACCESS_KEY_SECRET` as environmental variables and 
+`AWS_ACCESS_KEY_SECRET` set as environmental variables and have access to an already-created 
+bucket.
 
 ```
 nosetests
@@ -64,7 +65,9 @@ assert(obj == obj)
 `s3pyo` will attempt to format your filepath
 for you given arbitary `**kwargs` passed to 
 any method. You also have access to utility values 
-accessed by the "@" operator these include:
+accessed by the "@" operator.
+
+These include:
 
 - '@second': "56"
 - '@minute': "54"
