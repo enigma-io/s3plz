@@ -8,19 +8,24 @@ class TestS3PO(unittest.TestCase):
 	
 	def test_s3po(self):
 		"""
-		simple sanity tests on all methods.
+		Simple workflow which addresses 
+		all methods and use cases.
 		"""
+
+		# connect to s3
 		s3 = s3pyo.connect(MY_TEST_BUCKET, 
 			serializer="json.gz",
 			public = False
 		)	
+
+		# create an object and formatstring
 		obj1 = {"key": "value"}
-		filepathformat = 's3pyotest/{@date_path}/{key}/{@timestamp}.json.gz'
+		formatstring = 's3pyotest/{@date_path}/{key}/{@timestamp}.json.gz'
 
-		# check put method
-		fp1 = s3.put(obj1, filepathformat, **obj1)
+		# put the object
+		fp1 = s3.put(obj1, formatstring, **obj1)
 
-		# check exists method
+		# check exists / put method (did the object make it there?)
 		assert(s3.exists(fp1) is not False)
 
 		# check get method
@@ -29,11 +34,11 @@ class TestS3PO(unittest.TestCase):
 		# check whether serialization / deserialization works
 		assert(obj1 == obj2)
 
-		# check filepath formatting.
+		# check ls / filepath formatting.
 		for fp in s3.ls('s3pyotest/'):
 			assert('value' in fp)
 
-		# check streaming method 
+		# check streaming method / deserialization
 		for fp, obj in s3.stream('s3pyotest/'):
 			assert("key" in obj)
 			assert(isinstance(obj, dict))
@@ -42,14 +47,14 @@ class TestS3PO(unittest.TestCase):
 		# check upsert method / whether 
 		# updates to contextual time variables
 		# are reflected in formatted filepaths.
-		fp2 = s3.upsert(obj1, filepathformat, **ob1)
+		fp2 = s3.upsert(obj1, formatstring, **obj1)
 		assert(fp2 is not False)
 		assert(fp1 != fp2)
 
 		# check whether delete method works 
 		for fp in s3.ls('s3pyotest/'):
 			s3.delete(fp)
-
+		assert(len(list(s3.ls('s3pyotest/'))) == 0)
 
 
 	def test_json(self):
