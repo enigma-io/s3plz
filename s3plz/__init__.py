@@ -5,16 +5,16 @@ import boto
 import boto.s3
 from boto.s3.key import Key
 
-from utils import *
+import utils
 
 def connect(uri, **kw):
     """
     A wrapper for the core class 
     for a more elegant API:
 
-        import s3pyo
+        import s3plz
 
-        s3 = s3pyo.connect('s3://enigma-euclid')
+        s3 = s3plz.connect('s3://enigma-euclid')
         s3.get('test/file.txt')
 
     """
@@ -35,7 +35,7 @@ class S3:
     def __init__(self, uri, **kw):
       
         # get bucket name / abs root.
-        self.bucket_name = parse_s3_uri(uri)
+        self.bucket_name = utils.parse_s3_bucket(uri)
         self.s3root = "s3://{}".format(self.bucket_name)
         
         # connect to bucket
@@ -58,7 +58,7 @@ class S3:
 
     def upsert(self, data, filepath, **kw): 
         """
-        only upload a file if it doesnt already exist,
+        Upload a file if it doesnt already exist,
         otherwise return False
         """
         k = self._gen_key_from_fp(filepath, **kw)
@@ -91,6 +91,11 @@ class S3:
         Return a generator of filepaths under a directory.
         """
         directory = self._format_filepath(directory, **kw)
+        
+        # s3 requires directories end with '/'
+        if not directory.endswith('/'):
+            directory += "/"
+
         for k in self.bucket.list(directory):
             yield self._make_abs(str(k.key))
 
@@ -99,8 +104,12 @@ class S3:
         Return a generator which contains a 
         tuple of (filepath, filecontents from s3.).
         """
-        # stream contents and optionally match filepaths
         directory = self._format_filepath(directory, **kw)
+        
+        # s3 requires directories end with '/'
+        if not directory.endswith('/'):
+            directory += "/"
+
         for k in self.bucket.list(directory):
             fp = self._make_abs(str(k.key))
             obj = self._get(fp)
@@ -110,9 +119,7 @@ class S3:
         """
         Delete a File from s3.
         """
-        k = self._gen_key_from_fp(filepath, **kw)
-        self.bucket.delete_key(k)
-        return self._make_abs(str(k.key))
+        return self._delete(filepath, **kw)
 
     def serialize(self, obj):
         """
@@ -125,13 +132,18 @@ class S3:
         """
 
         if self.serializer == "json.gz":
-            return to_gz(to_json(obj))
+            return utils.to_gz(utils.to_json(obj))
         
         elif self.serializer == "json":
-            return to_json(obj)
+            return utils.to_json(obj)
 
         elif self.serializer == "gz":
-            return to_gz(obj)
+            assert(isinstance(obj, basestring))
+            return utils.to_gz(obj)
+
+        elif self.serializer == "zip":
+            assert(isinstance(obj, basestring))
+            return utils.to_zip(obj)
 
         elif self.serializer is not None:
 
@@ -152,13 +164,16 @@ class S3:
         """
 
         if self.serializer == "json.gz":
-            return from_json(from_gz(string))
+            return utils.from_json(utils.from_gz(string))
         
         elif self.serializer == "json":
-            return from_json(string)
+            return utils.from_json(string)
 
         elif self.serializer == "gz":
-            return from_gz(string)
+            return utils.from_gz(string)
+
+        elif self.serializer == "zip":
+            return utils.from_zip(string)
 
         elif self.serializer is not None:
 
@@ -223,11 +238,11 @@ class S3:
             # by the above conditional
             filepath = filepath[1:]
 
-        return format_filepath(filepath, **kw)
+        return utils.format_filepath(filepath, **kw)
 
     def _make_abs(self, filepath):
         """
-        Output absolute filepaths from ls and stream!
+        Output only absolute filepaths. Fight me.
         """
         if not filepath.startswith('s3://'):
             filepath = '{}/{}'.format(self.s3root, filepath)
@@ -255,4 +270,12 @@ class S3:
         else:
             return None
 
-
+    def _delete(self, filepath, **kw):
+        """
+        Wrapper for delete. Unnecessary but 
+        Is nice to have for expanding on 
+        the core class without writing `boto` code.
+        """
+        k = self._gen_key_from_fp(filepath, **kw)
+        self.bucket.delete_key(k)
+        return self._make_abs(str(k.key))

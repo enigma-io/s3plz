@@ -4,6 +4,7 @@ from urlparse import urlparse
 from datetime import datetime 
 import ujson
 import gzip
+import zlib
 import uuid
 import cStringIO
 
@@ -20,7 +21,7 @@ def is_s3_uri(uri):
 
         return False
 
-def parse_s3_uri(uri):
+def parse_s3_bucket(uri, _return_path=False):
     """Parse an S3 URI into (bucket, key)
 
     >>> parse_s3_uri('s3://walrus/tmp/')
@@ -38,7 +39,11 @@ def parse_s3_uri(uri):
     
         raise ValueError('Invalid S3 URI: {}'.format(uri))
 
-    return components.netloc
+    if _return_path:
+        return components.netloc, components.path 
+
+    else:
+        return components.netloc
 
 def filepath_opts():
     """
@@ -63,6 +68,17 @@ def filepath_opts():
         '@datetime_slug': dt.strftime('%Y-%m-%d-%H-%M-%S'),
         '@uid': uuid.uuid1()
     }
+
+def s3_to_url(s3uri): 
+    # get the bucket & path, this is a hack for 
+    # internal purposes, soorry.
+    bucket, path = parse_s3_bucket(s3uri, _return_path=True)
+    return "http://{}.s3.amazonaws.com/{}".format(bucket, path)
+
+def url_to_s3(url):
+    nohttp = url.split('http://')[1]
+    bucket, path = nohttp.split('.s3.amazonaws.com/')
+    return "s3://{}/{}".forat(bucket, path)
 
 def format_filepath(fp, **kw):
     """
@@ -105,4 +121,14 @@ def to_json(obj):
     """
     return ujson.dumps(obj)
 
+def to_zip(s):
+    """
+    string > zip 
+    """
+    return zlib.compress(s)
 
+def from_zip(s):
+    """
+    zip > string
+    """
+    return zlib.decompress(s)
