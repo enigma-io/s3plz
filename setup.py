@@ -1,8 +1,4 @@
-import os
 from setuptools import setup
-
-def readme(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 def build():
     setup(
@@ -15,7 +11,6 @@ def build():
         keywords = "s3, aws",
         url = "https://github.com/enigma-io/s3pyo",
         packages = ['s3pyo'],
-        long_description = readme('README.md'),
         install_requires = [
             "boto",
             "ujson"
