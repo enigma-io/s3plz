@@ -44,7 +44,7 @@ def filepath_opts():
     """
     Get a dictionary of timestrings
     to pass as default options 
-    for `format_filepath`
+    for ``s3pyo.utils.format_filepath``
 
     These can be accessed with the '@' key.
     
@@ -69,7 +69,7 @@ def format_filepath(fp, **kw):
     Given a format string,
     fill in fields with defaults / data.
 
-    Since this .format is idempotent, it wont 
+    Since .format() is idempotent, it wont 
     affect non-format strings. Thanks @jak
     """
     kw.update(filepath_opts())

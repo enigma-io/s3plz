@@ -27,7 +27,7 @@ import s3pyo
 # methods for sending objects
 # to and from Amazon S3.
 
-plz = s3pyo.please('s3://asteroid', 
+s3 = s3pyo.connect('s3://asteroid', 
 	key='navigate',
 	secret='shield',
 	serializer="json.gz",
@@ -46,13 +46,13 @@ plz = s3pyo.please('s3://asteroid',
 obj = {"key": "value"}
 filepath = 'test/{key}.json.gz'
 
-fp = plz.put(obj, filepath, **obj)
+fp = s3.put(obj, filepath, **obj)
 print fp
 
 # >>> 's3://my-bucket/test/value.json.gz'
 # you can now fetch this object with its filepath
 
-obj =  plz.get(fp)
+obj =  s3.get(fp)
 assert(obj == obj)
 
 ```
@@ -88,8 +88,8 @@ import s3pyo
 obj = {"key": "value"}
 filepath = 'test/{key}/{@date_path}/{@uid}.json.gz'
 
-plz = s3pyo.please('s3://my-bucket')
-fp = plz.put(obj, filepath, **obj)
+s3 = s3pyo.connect('s3://my-bucket')
+fp = s3.put(obj, filepath, **obj)
 print fp 
 # >>> 's3://my-bucket/value/2014/08/25/3225-sdsa-35235-asdfas-235.json.gz'
 
@@ -100,7 +100,7 @@ print fp
 ### Serialization
 
 By default, you can serialize / deserialize objects to / from `json.gz`, 
-`json`, or `gz` (set with `serialize` via `s3pyo.please`. However, you can also inherit from the core `s3pyo.S3` class and overwrite the `serialize` and `deserialize` methods.
+`json`, or `gz` (set with `serialize` via `s3pyo.connect`. However, you can also inherit from the core `s3pyo.S3` class and overwrite the `serialize` and `deserialize` methods.
 
 ```python
 
@@ -114,8 +114,8 @@ class SqlAlchemyToS3(S3):
 	def deserialize(self, string):
 		return "Undo it."
 
-plz = SqlAlchemyToS3('s3://bucket')
-print plz.get('s3://bucket/file.mycoolformat')
+s3 = SqlAlchemyToS3('s3://bucket')
+print s3.get('s3://bucket/file.mycoolformat')
 # >>> `A SqLAlchemy Model`
 ```
 

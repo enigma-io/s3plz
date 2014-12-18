@@ -7,15 +7,15 @@ from boto.s3.key import Key
 
 from utils import *
 
-def please(uri, **kw):
+def connect(uri, **kw):
     """
     A wrapper for the core class 
     for a more elegant API:
 
         import s3pyo
 
-        plz = s3pyo.please('s3://enigma-euclid')
-        plz.get('test/file.txt')
+        s3 = s3pyo.connect('s3://enigma-euclid')
+        s3.get('test/file.txt')
 
     """
     return S3(uri, **kw)
@@ -103,7 +103,7 @@ class S3:
         directory = self._format_filepath(directory, **kw)
         for k in self.bucket.list(directory):
             fp = self._make_abs(str(k.key))
-            obj = self.deserialize(k)
+            obj = self._get(fp)
             yield fp, obj
 
     def delete(self, filepath, **kw):
