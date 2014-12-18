@@ -14,10 +14,13 @@ pip install s3plz
 To run tests, you must first set these 
 environmental variabels:
 
+```
 export AWS_ACCESS_KEY_ID='fdsaf'
 export AWS_ACCESS_KEY_SECRET='fdsaf'
 export S3PLZ_TEST_BUCKET='s3://my-cool-bucket'
 
+```
+and then run:
 ```
 nosetests
 ```
@@ -50,17 +53,17 @@ plz = s3plz.connect('s3://asteroid',
 # the formatted filepath (with an absolute s3path) 
 # for your records
 
-obj = {"key": "value"}
+obj1 = {"key": "value"}
 filepath = 'test/{key}.json.gz'
 
-fp = plz.put(obj, filepath, **obj)
+fp = plz.put(obj1, filepath, **obj1)
 print fp
 
 # >>> 's3://asteroid/test/value.json.gz'
 # you can now fetch this object with its filepath
 
-obj =  plz.get(fp)
-assert(obj == obj)
+obj2 =  plz.get(fp)
+assert(obj1 == obj2)
 
 ```
 
@@ -98,7 +101,7 @@ filepath = 'test/{key}/{@date_path}/{@uid}.json.gz'
 plz = s3plz.connect('s3://my-bucket')
 fp = plz.put(obj, filepath, **obj)
 print fp 
-# >>> 's3://my-bucket/value/2014/08/25/3225-sdsa-35235-asdfas-235.json.gz'
+# >>> 's3://my-bucket/test/value/2014/08/25/3225-sdsa-35235-asdfas-235.json.gz'
 
 ```
 
