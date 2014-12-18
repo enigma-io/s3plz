@@ -11,7 +11,8 @@ pip install s3pyo
 ## Tests
 
 **NOTE** very basic for now. They also assume you have set `AWS_ACCESS_KEY_ID` and 
-`AWS_ACCESS_KEY_SECRET` as environmental variables and 
+`AWS_ACCESS_KEY_SECRET` set as environmental variables and have access to an already-created 
+bucket.
 
 ```
 nosetests
