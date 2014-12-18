@@ -17,7 +17,7 @@ if not MY_TEST_BUCKET:
 
 class TestS3plz(unittest.TestCase):
 	
-	def test_s3po(self):
+	def test_s3plz(self):
 		"""
 		Simple workflow which addresses 
 		all methods and use cases.
