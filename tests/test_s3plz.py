@@ -31,7 +31,7 @@ class TestS3plz(unittest.TestCase):
 
 		# create an object and formatstring
 		obj1 = {"key": "value"}
-		formatstring = 's3plztest/{@date_path}/{key}/{@timestamp}.json.gz'
+		formatstring = 's3plztest/{@date_path}/{key}/{@uid}.json.gz'
 
 		# put the object
 		fp1 = plz.put(obj1, formatstring, **obj1)
