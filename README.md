@@ -65,7 +65,9 @@ assert(obj == obj)
 `s3pyo` will attempt to format your filepath
 for you given arbitary `**kwargs` passed to 
 any method. You also have access to utility values 
-accessed by the "@" operator these include:
+accessed by the "@" operator.
+
+These include:
 
 - '@second': "56"
 - '@minute': "54"
