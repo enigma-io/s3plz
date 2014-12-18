@@ -14,7 +14,7 @@ def is_s3_uri(uri):
     """
     try:
 
-        parse_s3_uri(uri)
+        parse_s3_bucket(uri)
         return True
     
     except ValueError:
