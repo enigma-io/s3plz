@@ -14,6 +14,7 @@ pip install s3plz
 To run tests, you must first set these 
 environmental variabels:
 
+```
 export AWS_ACCESS_KEY_ID='fdsaf'
 export AWS_ACCESS_KEY_SECRET='fdsaf'
 export S3PLZ_TEST_BUCKET='s3://my-cool-bucket'
