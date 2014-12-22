@@ -109,8 +109,7 @@ print fp
 
 ### Serialization
 
-By default, you can serialize / deserialize objects to / from `json.gz`, 
-`json`, `gz`, or `zip` (set with `serialize` via `s3plz.connect`). However, you can also inherit from the core `s3plz.S3` class and overwrite the `serialize` and `deserialize` methods.
+By default, `s3plz` will send strings to/from S3. You can also serialize / deserialize objects to / from `json.gz`, `json`, `gz`, or `zip` (set with `serialize` via `s3plz.connect`). However, you can also inherit from the core `s3plz.S3` class and overwrite the `serialize` and `deserialize` methods.
 
 ```python
 
