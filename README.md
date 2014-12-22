@@ -83,7 +83,7 @@ These include:
 - `@hour`: : `23`
 - `@day`: `29`
 - `@month`: `01`
-- `@year`: : `2014`
+- `@year`: `2014`
 - `@timestamp` : `1234567`
 - `@date_path` : `2014/01/14`
 - `@date_slug` : `2014-01-14`
