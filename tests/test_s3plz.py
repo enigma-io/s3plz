@@ -86,6 +86,11 @@ class TestS3plz(unittest.TestCase):
 		string2 = s3plz.utils.from_zip(gzstring)
 		assert(string1 == string2)
 
+	def test_pickle(self):
+		string1 = "uqbar"
+		gzstring = s3plz.utils.to_pickle(string1)
+		string2 = s3plz.utils.from_pickle(gzstring)
+		assert(string1 == string2)
 
 
 

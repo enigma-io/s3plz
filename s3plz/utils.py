@@ -6,6 +6,7 @@ import ujson
 import gzip
 import zlib
 import uuid
+import pickle
 import cStringIO
 
 def is_s3_uri(uri):
@@ -132,3 +133,17 @@ def from_zip(s):
     zip > string
     """
     return zlib.decompress(s)
+
+def to_pickle(obj):
+    """
+    obj > picklestring
+    """
+    return pickle.dumps(obj)
+
+def from_pickle(s):
+    """
+    picklestring > object
+    """
+    return pickle.loads(s)
+
+

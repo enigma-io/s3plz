@@ -102,7 +102,7 @@ class S3:
     def stream(self, directory='', **kw):
         """
         Return a generator which contains a 
-        tuple of (filepath, filecontents from s3.).
+        tuple of (filepath, filecontents) from s3.
         """
         directory = self._format_filepath(directory, **kw)
         
@@ -117,7 +117,7 @@ class S3:
 
     def delete(self, filepath, **kw):
         """
-        Delete a File from s3.
+        Delete a file from s3.
         """
         return self._delete(filepath, **kw)
 
@@ -127,8 +127,10 @@ class S3:
         This can be overwritten for custom 
         uses.
 
-        The default is `None` which means 
-        We wont do anything to the object.
+        The default is to do nothing ('serializer'=None)
+        If the connection is intialized with 'serializer' set to 
+        'json.gz', 'json', 'gz', or 'zip', we'll do the 
+        transformations.
         """
 
         if self.serializer == "json.gz":
@@ -145,6 +147,9 @@ class S3:
             assert(isinstance(obj, basestring))
             return utils.to_zip(obj)
 
+        elif self.serializer == "pickle":
+            return utils.to_pickle(obj)
+
         elif self.serializer is not None:
 
             raise NotImplementedError(
@@ -155,12 +160,14 @@ class S3:
 
     def deserialize(self, string):
         """
-        Function for deserializing string => object.
+        Function for serializing object => string.
         This can be overwritten for custom 
         uses.
 
-        The default is `None` which means 
-        We wont do anything to the string.
+        The default is to do nothing ('serializer'=None)
+        If the connection is intialized with 'serializer' set to 
+        'json.gz', 'json', 'gz', or 'zip', we'll do the 
+        transformations.
         """
 
         if self.serializer == "json.gz":
@@ -174,6 +181,9 @@ class S3:
 
         elif self.serializer == "zip":
             return utils.from_zip(string)
+
+        elif self.serializer == "pickle":
+            return utils.from_pickle(obj)
 
         elif self.serializer is not None:
 
@@ -198,18 +208,18 @@ class S3:
         """
         
         # get keys from kwargs / environment
-        access_key = kw.get('key', \
+        key = kw.get('key', \
             os.getenv('AWS_ACCESS_KEY_ID'))
-        secret_key = kw.get('secret', \
+        secret = kw.get('secret', \
             os.getenv('AWS_ACCESS_KEY_SECRET'))
         
         # connect
-        conn = boto.connect_s3(access_key, secret_key)
-        
+        conn = boto.connect_s3(key, secret)
+
         # lookup bucket
-        for i in conn.get_all_buckets():
-            if self.bucket_name == i.name:
-                return i
+        for b in conn.get_all_buckets():
+            if self.bucket_name == b.name:
+                return b
 
         # bucket doesn't exist.
         raise ValueError(
@@ -219,7 +229,7 @@ class S3:
     def _gen_key_from_fp(self, filepath, **kw):
         """
         Take in a filepath and create a `boto.Key` for
-        interacting with it.
+        interacting with the file.
         """
         k = Key(self.bucket)
         k.key = self._format_filepath(filepath, **kw)
