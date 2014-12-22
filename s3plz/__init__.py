@@ -132,7 +132,7 @@ class S3:
         'json.gz', 'json', 'gz', or 'zip', we'll do the 
         transformations.
         """
-
+        print "serializer is", self.serializer
         if self.serializer == "json.gz":
             return utils.to_gz(utils.to_json(obj))
         
@@ -169,7 +169,7 @@ class S3:
         'json.gz', 'json', 'gz', or 'zip', we'll do the 
         transformations.
         """
-
+        print "deserializer is", self.serializer
         if self.serializer == "json.gz":
             return utils.from_json(utils.from_gz(string))
         
@@ -229,8 +229,10 @@ class S3:
     def _gen_key_from_fp(self, filepath, **kw):
         """
         Take in a filepath and create a `boto.Key` for
-        interacting with the file.
+        interacting with the file. Optionally reset serializer too! 
+
         """
+        self.serializer = kw.get('serializer', self.serializer)
         k = Key(self.bucket)
         k.key = self._format_filepath(filepath, **kw)
         return k

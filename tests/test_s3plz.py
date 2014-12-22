@@ -62,6 +62,17 @@ class TestS3plz(unittest.TestCase):
 		assert(fp2 is not False)
 		assert(fp1 != fp2)
 
+		# check on-the-fly serialization
+		obj1 = {"foo":"bar"}
+		fp = plz.put(obj1, "s3plztest/{foo}.json.gz", serializer="json.gz", **obj1)
+		obj2 = plz.get(fp, serializer="json.gz")
+		assert(obj1 == obj2)
+
+		string1 = "hello world"
+		fp = plz.put(string1, "s3plztest/string.zip", serializer="zip")
+		string2 = plz.get(fp, serializer="zip")
+		assert(string1 == string2)
+
 		# check whether delete method works 
 		for fp in plz.ls('s3plztest/'):
 			plz.delete(fp)

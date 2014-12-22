@@ -107,7 +107,26 @@ print fp
 
 ### Serialization
 
-By default, `s3plz` will send strings to/from S3. You can also serialize / deserialize objects to / from `json.gz`, `json`, `gz`, `zip`, or `pickle` (set with `serialize` via `s3plz.connect`). However, you can also inherit from the core `s3plz.S3` class and overwrite the `serialize` and `deserialize` methods.
+By default, `s3plz` will send strings to/from S3. You can also serialize / deserialize objects to / from `json.gz`, `json`, `gz`, `zip`, or `pickle` (set with `serialize` via `s3plz.connect`). These can also be changed on-the-fly by passing `serialize` as a `kwarg` into `get`, `put`, `stream` or `upsert`.
+
+For example,
+
+```python
+import s3plz 
+
+s3 = s3plz.connect('s3://my-bucket', serializer=None)
+obj1 = {"foo":"bar"}
+fp = s3.put(obj1, "test/{foo}.json.gz", serializer="json.gz", **obj1)
+obj2 = s3.get(fp, serializer="json.gz")
+assert(obj1 == obj2)
+
+string1 = "hello world"
+fp = s3.put(string1, "test/string.zip", serializer="zip")
+string2 = s3.get(fp, serializer="zip")
+assert(string1 == string2)
+```
+
+However, you can also inherit from the core `s3plz.S3` class and overwrite the `serialize` and `deserialize` methods:
 
 ```python
 
