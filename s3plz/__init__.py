@@ -132,7 +132,7 @@ class S3:
         'json.gz', 'json', 'gz', or 'zip', we'll do the 
         transformations.
         """
-        print "serializer is", self.serializer
+
         if self.serializer == "json.gz":
             return utils.to_gz(utils.to_json(obj))
         
@@ -169,7 +169,7 @@ class S3:
         'json.gz', 'json', 'gz', or 'zip', we'll do the 
         transformations.
         """
-        print "deserializer is", self.serializer
+
         if self.serializer == "json.gz":
             return utils.from_json(utils.from_gz(string))
         

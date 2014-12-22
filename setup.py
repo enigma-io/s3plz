@@ -3,7 +3,7 @@ from setuptools import setup
 def build():
     setup(
         name = "s3plz",
-        version = "0.0.8",
+        version = "0.0.9",
         author = "Brian Abelson",
         author_email = "brian@enigma.io",
         description = "A polite interface for sending python objects to and from Amazon S3.",
