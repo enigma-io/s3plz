@@ -78,17 +78,17 @@ time via the "@" operator.
 
 These include:
 
-- `@second`: `56`
-- `@minute`: `54`
-- `@hour`: `23`
-- `@day`: `29`
-- `@month`: `01`
-- `@year`: `2014`
-- `@timestamp`: `1234567`
-- `@date_path`: `2014/01/14`
-- `@date_slug`: `2014-01-14`
-- `@datetime_slug`: `2013-12-12-06-08-52`
-- `@uid`: `dasfas-23r32-sad-3sadf-sdf`
+- **@second**: `56`
+- **@minute**: `54`
+- **@hour**: `23`
+- **@day**: `29`
+- **@month**: `01`
+- **@year**: `2014`
+- **@timestamp**: `1234567`
+- **@date_path**: `2014/01/14`
+- **@date_slug**: `2014-01-14`
+- **@datetime_slug**: `2013-12-12-06-08-52`
+- **@uid**: `dasfas-23r32-sad-3sadf-sdf`
 
 For instance,
 
