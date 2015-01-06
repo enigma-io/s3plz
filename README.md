@@ -16,7 +16,7 @@ environmental variabels:
 
 ```
 export AWS_ACCESS_KEY_ID='fdsaf'
-export AWS_ACCESS_KEY_SECRET='fdsaf'
+export AWS_SECRET_ACCESS_KEY='fdsaf'
 export S3PLZ_TEST_BUCKET='s3://my-cool-bucket'
 
 ```
@@ -43,7 +43,7 @@ plz = s3plz.connect('s3://asteroid',
 )
 
 # You can also set `AWS_ACCESS_KEY_ID` and 
-# `AWS_ACCESS_KEY_SECRET` as environmental variables
+# `AWS_SECRET_ACCESS_KEY` as environmental variables
 # instead of passing `key` and `secret` to `s3plz.connect`
 
 

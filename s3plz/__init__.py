@@ -211,7 +211,7 @@ class S3:
         key = kw.get('key', \
             os.getenv('AWS_ACCESS_KEY_ID'))
         secret = kw.get('secret', \
-            os.getenv('AWS_ACCESS_KEY_SECRET'))
+            os.getenv('AWS_SECRET_ACCESS_KEY'))
         
         # connect
         conn = boto.connect_s3(key, secret)
