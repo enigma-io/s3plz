@@ -153,7 +153,7 @@ class S3:
         elif self.serializer is not None:
 
             raise NotImplementedError(
-                'Only json, gz, and json.gz'
+                'Only json, gz, json.gz, zip, and pickle'
                 'are supported as serializers.')
 
         return obj
@@ -188,7 +188,7 @@ class S3:
         elif self.serializer is not None:
 
             raise NotImplementedError(
-                'Only json, gz, and json.gz'
+                'Only json, gz, json.gz, zip, and pickle'
                 'are supported as serializers.')
         
         return string
