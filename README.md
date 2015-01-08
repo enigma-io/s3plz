@@ -107,7 +107,7 @@ print fp
 
 ### Serialization
 
-By default, `s3plz` will send strings to/from S3. You can also serialize / deserialize objects to / from `json.gz`, `json`, `gz`, `zip`, or `pickle` (set with `serialize` via `s3plz.connect`). These can also be changed on-the-fly by passing `serialize` as a `kwarg` into `get`, `put`, `stream` or `upsert`.
+By default, `s3plz` will send strings to/from S3. You can also serialize / deserialize objects to / from `json.gz`, `json`, `gz`, `zip`, or `pickle` (set with `serializer` via `s3plz.connect`). These can also be changed on-the-fly by passing `serializer` as a `kwarg` into `get`, `put`, `stream` or `upsert`.
 
 For example,
 
