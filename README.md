@@ -148,28 +148,28 @@ print s3.get('s3://bucket/file.mycoolformat')
 ## API 
 Full API Methods
 
-- `S3.put`
+- `S3.put(data, filepath, headers, serializer, **kw)`
 	* desciption: Upload a file if it doesnt already exist,
         otherwise return False
     * params:
-    	- data: Object to upload 
+    	- `data`: Object to upload 
     	- `filepath`: filepath format string 
     	- `headers`: http headers to set on the object.
     	- `serializer`: serializer to use for the object.
     	- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
     * returns: s3uri / False
 
-- `S3.upsert`
+- `S3.upsert(data, filepath, headers, serializer, **kw)`
 	* desciption: Upload a file if it doesnt already exist, otherwise return False
     * params:
-    	- data: Object to upload 
+    	- `data`: Object to upload 
     	- `filepath`: filepath format string 
     	- `headers`: http headers to set on the object.
     	- `serializer`: serializer to use for the object.
     	- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
     * returns: s3uri / False
 
-- `S3.get`
+- `S3.get(filepath, headers, serializer, **kw)`
 	* desciption: Download a file from s3. If it doesn't exist return None.
     * params:
     	- `filepath`: filepath format string 
@@ -178,45 +178,45 @@ Full API Methods
     	- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
     * returns: deserialized contents
 
-- `S3.get_meta`
+- `S3.get_meta(filepath,**kw)`
 	* desciption: Get a dictionary of metadata fields for a filepath. If it doesn't exist, return {}
     * params:
     	- `filepath`: filepath format string 
-    	- `headers`: http headers to set on the object.
-    	- `serializer`: serializer to use for the object.
     	- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
     * returns: dict of metadata.
 
 
-- `S3.get_age`
+- `S3.get_age(filepath, **kw)`
 	* desciption: Get the age of a a filepath. If it doesn't exist, return {}
 	* params:
 		- `filepath`: filepath format string 
 		- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
 	* returns: datetime.timedelta 
 
-- `S3.exists`
+- `S3.exists(filepath, **kw)`
 	* desciption: Check if a file exists on s3.
 	* params:
 		- `filepath`: filepath format string 
 		- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
 	* returns: s3_uri / False
 
-- `S3.ls`
+- `S3.ls(filepath, **kw)`
 	* desciption: Return a generator of filepaths under a directory.
 	* params:
 		- `filepath`: filepath format string 
 		- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
 	* returns: generator of s3_uri's
 
-- `S3.stream`
+- `S3.get(filepath, headers, serializer, **kw)`
 	* desciption: Return a generator of tuples of (s3_uri, contents) under a directory.
 	* params:
 		- `filepath`: filepath format string 
+    	- `headers`: http headers to set on the object.
+    	- `serializer`: serializer to use for the object.
 		- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
 	* returns: generator of tuples of (s3_uri, contents) from s3.
 
-- `S3.delete`
+- `S3.delete(filepath, **kw)`
 	* desciption: Delete a filepath from s3.
 	* params:
 		- `filepath`: filepath format string 
