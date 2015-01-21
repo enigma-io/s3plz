@@ -207,7 +207,7 @@ Full API Methods
 		- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
 	* returns: generator of s3_uri's
 
-- `S3.get(filepath, headers, serializer, **kw)`
+- `S3.stream(filepath, headers, serializer, **kw)`
 	* desciption: Return a generator of tuples of (s3_uri, contents) under a directory.
 	* params:
 		- `filepath`: filepath format string 
