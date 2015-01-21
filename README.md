@@ -185,7 +185,6 @@ Full API Methods
     	- `**kw**`: arbitrary kwargs to pass to the `filepath` format string.
     * returns: dict of metadata.
 
-
 - `S3.get_age(filepath, **kw)`
 	* desciption: Get the age of a a filepath. If it doesn't exist, return {}
 	* params:
