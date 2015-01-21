@@ -3,7 +3,7 @@ from setuptools import setup
 def build():
     setup(
         name = "s3plz",
-        version = "0.1.0",
+        version = "0.1.1",
         author = "Brian Abelson",
         author_email = "brian@enigma.io",
         description = "A polite interface for sending python objects to and from Amazon S3.",
@@ -13,7 +13,9 @@ def build():
         packages = ['s3plz'],
         install_requires = [
             "boto",
-            "ujson"
+            "ujson",
+            "python-dateutil",
+            "pytz"
         ],
         classifiers=[
             "Development Status :: 3 - Alpha",

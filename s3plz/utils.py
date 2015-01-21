@@ -8,6 +8,13 @@ import zlib
 import uuid
 import pickle
 import cStringIO
+import pytz
+
+def now(ts=True):
+    dt = datetime.now(pytz.utc)
+    if ts:
+        return int(ds.strftime('%s'))
+    return dt
 
 def is_s3_uri(uri):
     """
@@ -55,7 +62,7 @@ def filepath_opts():
     These can be accessed with the '@' key.
     
     """
-    dt = datetime.utcnow()  
+    dt = now(ts=False)
     return {
         '@second': "%02d" % int(dt.second),
         '@minute': "%02d" % int(dt.minute),

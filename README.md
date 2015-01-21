@@ -144,3 +144,80 @@ s3 = SqlAlchemyToS3('s3://bucket')
 print s3.get('s3://bucket/file.mycoolformat')
 # >>> `A SqLAlchemy Model`
 ```
+
+## API 
+Full API Methods
+
+- `S3.put`
+	* desciption: Upload a file if it doesnt already exist,
+        otherwise return False
+    * params:
+    	- data: Object to upload 
+    	- filepath: filepath format string 
+    	- headers: http headers to set on the object.
+    	- serializer: serializer to use for the object.
+    	- **kw: arbitrary kwargs to pass to the `filepath` format string.
+    * returns: s3uri / False
+
+- `S3.upsert`
+	* desciption: Upload a file if it doesnt already exist, otherwise return False
+    * params:
+    	- data: Object to upload 
+    	- filepath: filepath format string 
+    	- headers: http headers to set on the object.
+    	- serializer: serializer to use for the object.
+    	- **kw: arbitrary kwargs to pass to the `filepath` format string.
+    * returns: s3uri / False
+
+- `S3.get`
+	* desciption: Download a file from s3. If it doesn't exist return None.
+    * params:
+    	- filepath: filepath format string 
+    	- headers: http headers to set on the object.
+    	- serializer: serializer to use for the object.
+    	- **kw: arbitrary kwargs to pass to the `filepath` format string.
+    * returns: deserialized contents
+
+- `S3.get_meta`
+	* desciption: Get a dictionary of metadata fields for a filepath. If it doesn't exist, return {}
+    * params:
+    	- filepath: filepath format string 
+    	- headers: http headers to set on the object.
+    	- serializer: serializer to use for the object.
+    	- **kw: arbitrary kwargs to pass to the `filepath` format string.
+    * returns: dict of metadata.
+
+
+- `S3.get_age`
+	* desciption: Get the age of a a filepath. If it doesn't exist, return {}
+	* params:
+		- filepath: filepath format string 
+		- **kw: arbitrary kwargs to pass to the `filepath` format string.
+	* returns: datetime.timedelta 
+
+- `S3.exists`
+	* desciption: Check if a file exists on s3.
+	* params:
+		- filepath: filepath format string 
+		- **kw: arbitrary kwargs to pass to the `filepath` format string.
+	* returns: s3_uri / False
+
+- `S3.ls`
+	* desciption: Return a generator of filepaths under a directory.
+	* params:
+		- filepath: filepath format string 
+		- **kw: arbitrary kwargs to pass to the `filepath` format string.
+	* returns: generator of s3_uri's
+
+- `S3.stream`
+	* desciption: Return a generator of tuples of (s3_uri, contents) under a directory.
+	* params:
+		- filepath: filepath format string 
+		- **kw: arbitrary kwargs to pass to the `filepath` format string.
+	* returns: generator of tuples of (s3_uri, contents) from s3.
+
+- `S3.delete`
+	* desciption: Delete a filepath from s3.
+	* params:
+		- filepath: filepath format string 
+		- **kw: arbitrary kwargs to pass to the `filepath` format string.

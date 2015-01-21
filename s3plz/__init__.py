@@ -4,8 +4,9 @@ import os
 import boto
 import boto.s3
 from boto.s3.key import Key
-
+from dateutil import parser
 import utils
+
 
 def connect(uri, **kw):
     """
@@ -48,7 +49,8 @@ class S3:
         # for reasons explained in the `self.serializer`
         # docs.
         self.serializer = kw.get('serializer', None)
-        
+
+ 
     def put(self, data, filepath, **kw):
         """
         Upload a file to s3 with serialization.
@@ -67,13 +69,32 @@ class S3:
         else:
             return False
 
-
     def get(self, filepath, **kw):
         """
         Download a file from s3. If it doesn't exist return None.
         """
         return self._get(filepath, **kw)
 
+    def get_meta(self, filepath, **kw):
+        """
+        Get a dictionary of metadata fields for a filepath.
+        """
+        k = self._gen_key_from_fp(filepath, **kw)
+        k.name = k.key 
+        k = self.bucket.get_key(k.name)
+        return {
+            "content_type": k.content_type,
+            "last_modified": parser.parse(k.last_modified),
+            "content_language": k.content_language,
+            "content_encoding": k.content_encoding,
+            "content_length": k.content_length
+        }
+
+    def get_age(self, filepath, **kw):
+        meta = self.get_meta(filepath, **kw)
+        if not meta['last_modified']:
+            return None
+        return utils.now(ts=False) - meta['last_modified']
 
     def exists(self, filepath, **kw):
         """
@@ -84,7 +105,6 @@ class S3:
             return self._make_abs(str(k.key))
         else:
             return False
-
 
     def ls(self, directory='', **kw):
         """
@@ -234,7 +254,9 @@ class S3:
         """
         self.serializer = kw.get('serializer', self.serializer)
         k = Key(self.bucket)
-        k.key = self._format_filepath(filepath, **kw)
+        fp = self._format_filepath(filepath, **kw)
+        k.key = fp
+        k.name = fp
         return k
 
     def _format_filepath(self, filepath, **kw):
@@ -264,10 +286,10 @@ class S3:
         """
         Wrapper for serialization => s3
         """
-        
+        headers = kw.pop('headers', {})
         k = self._gen_key_from_fp(filepath, **kw)
         string = self.serialize(data)
-        k.set_contents_from_string(string)
+        k.set_contents_from_string(string, headers=headers)
         k.set_acl(self.acl_str)
         return self._make_abs(str(k.key))
 
@@ -275,9 +297,10 @@ class S3:
         """
         Wrapper for s3 => deserialization
         """
+        headers = kw.pop('headers', {})
         k = self._gen_key_from_fp(filepath, **kw)
         if k.exists():
-            string = k.get_contents_as_string()
+            string = k.get_contents_as_string(headers=headers)
             return self.deserialize(string)
         else:
             return None
@@ -291,3 +314,5 @@ class S3:
         k = self._gen_key_from_fp(filepath, **kw)
         self.bucket.delete_key(k)
         return self._make_abs(str(k.key))
+
+
