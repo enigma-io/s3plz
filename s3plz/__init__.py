@@ -89,6 +89,9 @@ class S3:
         }
 
     def get_age(self, filepath, **kw):
+        """
+        Get the age of a filepath. Returns a datetime.timedelta object.
+        """
         meta = self.get_meta(filepath, **kw)
         if not meta['last_modified']:
             return None
