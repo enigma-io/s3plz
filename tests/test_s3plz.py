@@ -62,7 +62,7 @@ class TestS3plz(unittest.TestCase):
         # check upsert method / whether 
         # updates to contextual time variables
         # are reflected in formatted filepaths.
-        fp2 = plz.upsert(obj1, formatstring, **obj1)
+        fp2 = plz.upsert(obj1, formatstring,  serializer="json.gz", **obj1)
         assert(fp2 is not False)
         assert(fp1 != fp2)
 
