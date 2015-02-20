@@ -28,8 +28,7 @@ class TestS3plz(unittest.TestCase):
         # try:
         # connect to s3
         plz = s3plz.connect(MY_TEST_BUCKET, 
-            public = False,
-            serializer = "json.gz"
+            public = False
         )   
 
         # create an object and formatstring
@@ -37,13 +36,13 @@ class TestS3plz(unittest.TestCase):
         formatstring = 's3plztest-0.1.2/{@date_path}/{key}/{@uid}.json.gz'
 
         # put the object
-        fp1 = plz.put(obj1, formatstring, **obj1)
+        fp1 = plz.put(obj1, formatstring, serializer = "json.gz", **obj1)
 
         # check exists / put method (did the object make it there?)
         assert(plz.exists(fp1) is not False)
 
         # check get method
-        obj2 =  plz.get(fp1)
+        obj2 =  plz.get(fp1, serializer = "json.gz",)
         
         # check whether serialization / deserialization works
         assert(obj1 == obj2)

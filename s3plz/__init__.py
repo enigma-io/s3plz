@@ -130,7 +130,7 @@ class S3:
 
         for k in self.bucket.list(directory):
             fp = self._make_abs(str(k.key))
-            obj = self._get(fp)
+            obj = self._get(fp, **kw)
             yield fp, obj
 
     def delete(self, filepath, **kw):
