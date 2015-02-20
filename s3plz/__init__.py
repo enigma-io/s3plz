@@ -45,10 +45,8 @@ class S3:
         # set public/private
         self.acl_str = self._set_acl_str(kw.get('public', False))
 
-        # get the serializer, we don't set a default 
-        # for reasons explained in the `self.serializer`
-        # docs.
-        self.serializer = kw.get('serializer', None)
+        # set a default serializer for this connection.
+        self._serializer = kw.get('serializer', None)
 
  
     def put(self, data, filepath, **kw):
@@ -141,7 +139,7 @@ class S3:
         """
         return self._delete(filepath, **kw)
 
-    def serialize(self, obj):
+    def serialize(self, obj, **kw):
         """
         Function for serializing object => string.
         This can be overwritten for custom 
@@ -152,25 +150,26 @@ class S3:
         'json.gz', 'json', 'gz', or 'zip', we'll do the 
         transformations.
         """
+        serializer = kw.get('serializer',  self._serializer)
 
-        if self.serializer == "json.gz":
+        if serializer == "json.gz":
             return utils.to_gz(utils.to_json(obj))
         
-        elif self.serializer == "json":
+        elif serializer == "json":
             return utils.to_json(obj)
 
-        elif self.serializer == "gz":
+        elif serializer == "gz":
             assert(isinstance(obj, basestring))
             return utils.to_gz(obj)
 
-        elif self.serializer == "zip":
+        elif serializer == "zip":
             assert(isinstance(obj, basestring))
             return utils.to_zip(obj)
 
-        elif self.serializer == "pickle":
+        elif serializer == "pickle":
             return utils.to_pickle(obj)
 
-        elif self.serializer is not None:
+        elif serializer is not None:
 
             raise NotImplementedError(
                 'Only json, gz, json.gz, zip, and pickle'
@@ -178,7 +177,7 @@ class S3:
 
         return obj
 
-    def deserialize(self, string):
+    def deserialize(self, string, **kw):
         """
         Function for serializing object => string.
         This can be overwritten for custom 
@@ -190,22 +189,24 @@ class S3:
         transformations.
         """
 
-        if self.serializer == "json.gz":
+        serializer = kw.get('serializer',  self._serializer)
+
+        if serializer == "json.gz":
             return utils.from_json(utils.from_gz(string))
         
-        elif self.serializer == "json":
+        elif serializer == "json":
             return utils.from_json(string)
 
-        elif self.serializer == "gz":
+        elif serializer == "gz":
             return utils.from_gz(string)
 
-        elif self.serializer == "zip":
+        elif serializer == "zip":
             return utils.from_zip(string)
 
-        elif self.serializer == "pickle":
+        elif serializer == "pickle":
             return utils.from_pickle(obj)
 
-        elif self.serializer is not None:
+        elif serializer is not None:
 
             raise NotImplementedError(
                 'Only json, gz, json.gz, zip, and pickle'
@@ -252,7 +253,6 @@ class S3:
         interacting with the file. Optionally reset serializer too! 
 
         """
-        self.serializer = kw.get('serializer', self.serializer)
         k = Key(self.bucket)
         fp = self._format_filepath(filepath, **kw)
         k.key = fp
@@ -288,7 +288,7 @@ class S3:
         """
         headers = kw.pop('headers', {})
         k = self._gen_key_from_fp(filepath, **kw)
-        string = self.serialize(data)
+        string = self.serialize(data, **kw)
         k.set_contents_from_string(string, headers=headers)
         k.set_acl(self.acl_str)
         return self._make_abs(str(k.key))
@@ -301,7 +301,7 @@ class S3:
         k = self._gen_key_from_fp(filepath, **kw)
         if k.exists():
             string = k.get_contents_as_string(headers=headers)
-            return self.deserialize(string)
+            return self.deserialize(string, **kw)
         else:
             return None
 

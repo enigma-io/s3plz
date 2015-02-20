@@ -38,7 +38,6 @@ import s3plz
 plz = s3plz.connect('s3://asteroid', 
 	key='navigate',
 	secret='shield',
-	serializer="json.gz",
 	public = False
 )
 
@@ -114,7 +113,7 @@ For example,
 ```python
 import s3plz 
 
-s3 = s3plz.connect('s3://my-bucket', serializer=None)
+s3 = s3plz.connect('s3://my-bucket')
 obj1 = {"foo":"bar"}
 fp = s3.put(obj1, "test/{foo}.json.gz", serializer="json.gz", **obj1)
 obj2 = s3.get(fp, serializer="json.gz")
