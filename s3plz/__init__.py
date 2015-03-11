@@ -21,6 +21,11 @@ def connect(uri, **kw):
     """
     return S3(uri, **kw)
 
+class S3AuthError(Exception):
+    """
+    If Auth values are not set, this error will be thrown.
+    """
+
 class S3:
     
     """ 
@@ -237,8 +242,17 @@ class S3:
         secret = kw.get('secret', \
             os.getenv('AWS_SECRET_ACCESS_KEY'))
         
-        # connect
-        conn = boto.connect_s3(key, secret)
+        # check for valid key / secret
+        if not key or not secret:
+            raise S3AuthError, \
+            'You must pass in a "key" and "secret" to s3plz.connect() or set '
+            '"AWS_ACCESS_KEY_ID" and "AWS_SECRET_ACCESS_KEY" as environment variables.'
+        
+        try:
+            conn = boto.connect_s3(key, secret)
+        except Exception as e:
+            raise S3AuthError, \
+            "Your supplied credentials we're invalid!"
 
         # lookup bucket
         for b in conn.get_all_buckets():

@@ -117,6 +117,15 @@ class TestS3plz(unittest.TestCase):
         string2 = s3plz.utils.from_pickle(gzstring)
         assert(string1 == string2)
 
+    def test_auth_error(self):
+        print "bad s3plz connections should throw an S3AuthError"
+        try:
+            s3plz.connect(MY_TEST_BUCKET, key=None, secret=None)
+        except s3plz.S3AuthError:
+            assert True 
+        else:
+            assert False
+
 
 
 
