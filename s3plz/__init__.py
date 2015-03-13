@@ -245,7 +245,7 @@ class S3:
         # check for valid key / secret
         if not key or not secret:
             raise S3AuthError, \
-            'You must pass in a "key" and "secret" to s3plz.connect() or set '
+            'You must pass in a "key" and "secret" to s3plz.connect() or set ' \
             '"AWS_ACCESS_KEY_ID" and "AWS_SECRET_ACCESS_KEY" as environment variables.'
         
         try:
