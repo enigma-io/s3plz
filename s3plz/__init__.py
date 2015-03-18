@@ -85,22 +85,28 @@ class S3:
         k = self._gen_key_from_fp(filepath, **kw)
         k.name = k.key 
         k = self.bucket.get_key(k.name)
-        return {
-            "content_type": k.content_type,
-            "last_modified": parser.parse(k.last_modified),
-            "content_language": k.content_language,
-            "content_encoding": k.content_encoding,
-            "content_length": k.content_length
-        }
+        if k:
+            return {
+                "content_type": k.content_type,
+                "last_modified": parser.parse(k.last_modified),
+                "content_language": k.content_language,
+                "content_encoding": k.content_encoding,
+                "content_length": k.content_length
+            }
+        else:
+            return None
 
     def get_age(self, filepath, **kw):
         """
         Get the age of a filepath. Returns a datetime.timedelta object.
         """
         meta = self.get_meta(filepath, **kw)
-        if not meta['last_modified']:
+        if meta:
+            if not meta['last_modified']:
+                return None
+            return utils.now(ts=False) - meta['last_modified']
+        else:
             return None
-        return utils.now(ts=False) - meta['last_modified']
 
     def exists(self, filepath, **kw):
         """
@@ -245,7 +251,7 @@ class S3:
         # check for valid key / secret
         if not key or not secret:
             raise S3AuthError, \
-            'You must pass in a "key" and "secret" to s3plz.connect() or set '
+            'You must pass in a "key" and "secret" to s3plz.connect() or set ' \
             '"AWS_ACCESS_KEY_ID" and "AWS_SECRET_ACCESS_KEY" as environment variables.'
         
         try:
