@@ -2,7 +2,7 @@
 
 from urlparse import urlparse
 from datetime import datetime 
-import ujson
+import json
 import gzip
 import zlib
 import uuid
@@ -121,13 +121,13 @@ def from_json(s):
     """
     jsonstring > obj
     """
-    return ujson.loads(s)
+    return json.loads(s)
 
 def to_json(obj):
     """
     obj > jsonstring
     """
-    return ujson.dumps(obj)
+    return json.dumps(obj)
 
 def to_zip(s):
     """
