@@ -258,7 +258,7 @@ class S3:
             conn = boto.connect_s3(key, secret)
         except Exception as e:
             raise S3AuthError, \
-            "Your supplied credentials we're invalid!"
+            "You're supplied credentials were invalid!"
 
         # lookup bucket
         for b in conn.get_all_buckets():
