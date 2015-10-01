@@ -72,7 +72,7 @@ assert(obj1 == obj2)
 ## Filepaths
 
 `s3plz` will attempt to format your filepath
-for you given arbitary `**kwargs` passed to 
+for you given arbitrary `**kwargs` passed to 
 any method. You also have access to UTC 
 time via the "@" operator.
 
