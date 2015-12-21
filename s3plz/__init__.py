@@ -10,7 +10,7 @@ import utils
 
 def connect(uri, **kw):
     """
-    A wrapper for the core class 
+    A wrapper for the core class
     for a more elegant API:
 
         import s3plz
@@ -21,47 +21,47 @@ def connect(uri, **kw):
     """
     return S3(uri, **kw)
 
+
 class S3AuthError(Exception):
     """
     If Auth values are not set, this error will be thrown.
     """
 
+
 class S3:
-    
-    """ 
-    A class for connecting to a s3 bucket and 
+
+    """
+    A class for connecting to a s3 bucket and
     uploading/downloading files.
 
-    Includes support for automatically formatting 
-    filepaths from time / contextual variables / uids 
-    as well as serializing and deserializing objects 
-    to and from s3. 
+    Includes support for automatically formatting
+    filepaths from time / contextual variables / uids
+    as well as serializing and deserializing objects
+    to and from s3.
     """
 
     def __init__(self, uri, **kw):
-      
+
         # get bucket name / abs root.
         self.bucket_name = utils.parse_s3_bucket(uri)
         self.s3root = "s3://{}".format(self.bucket_name)
-        
+
         # connect to bucket
         self.bucket = self._connect_to_bucket(**kw)
-        
+
         # set public/private
         self.acl_str = self._set_acl_str(kw.get('public', False))
 
         # set a default serializer for this connection.
         self._serializer = kw.get('serializer', None)
 
- 
     def put(self, data, filepath, **kw):
         """
         Upload a file to s3 with serialization.
         """
         return self._put(data, filepath, **kw)
 
-
-    def upsert(self, data, filepath, **kw): 
+    def upsert(self, data, filepath, **kw):
         """
         Upload a file if it doesnt already exist,
         otherwise return False
@@ -83,7 +83,7 @@ class S3:
         Get a dictionary of metadata fields for a filepath.
         """
         k = self._gen_key_from_fp(filepath, **kw)
-        k.name = k.key 
+        k.name = k.key
         k = self.bucket.get_key(k.name)
         if k:
             return {
@@ -123,7 +123,7 @@ class S3:
         Return a generator of filepaths under a directory.
         """
         directory = self._format_filepath(directory, **kw)
-        
+
         # s3 requires directories end with '/'
         if not directory.endswith('/'):
             directory += "/"
@@ -133,11 +133,11 @@ class S3:
 
     def stream(self, directory='', **kw):
         """
-        Return a generator which contains a 
+        Return a generator which contains a
         tuple of (filepath, filecontents) from s3.
         """
         directory = self._format_filepath(directory, **kw)
-        
+
         # s3 requires directories end with '/'
         if not directory.endswith('/'):
             directory += "/"
@@ -156,19 +156,19 @@ class S3:
     def serialize(self, obj, **kw):
         """
         Function for serializing object => string.
-        This can be overwritten for custom 
+        This can be overwritten for custom
         uses.
 
         The default is to do nothing ('serializer'=None)
-        If the connection is intialized with 'serializer' set to 
-        'json.gz', 'json', 'gz', or 'zip', we'll do the 
+        If the connection is intialized with 'serializer' set to
+        'json.gz', 'json', 'gz', or 'zip', we'll do the
         transformations.
         """
         serializer = kw.get('serializer',  self._serializer)
 
         if serializer == "json.gz":
             return utils.to_gz(utils.to_json(obj))
-        
+
         elif serializer == "json":
             return utils.to_json(obj)
 
@@ -194,12 +194,12 @@ class S3:
     def deserialize(self, string, **kw):
         """
         Function for serializing object => string.
-        This can be overwritten for custom 
+        This can be overwritten for custom
         uses.
 
         The default is to do nothing ('serializer'=None)
-        If the connection is intialized with 'serializer' set to 
-        'json.gz', 'json', 'gz', or 'zip', we'll do the 
+        If the connection is intialized with 'serializer' set to
+        'json.gz', 'json', 'gz', or 'zip', we'll do the
         transformations.
         """
 
@@ -207,7 +207,7 @@ class S3:
 
         if serializer == "json.gz":
             return utils.from_json(utils.from_gz(string))
-        
+
         elif serializer == "json":
             return utils.from_json(string)
 
@@ -225,35 +225,34 @@ class S3:
             raise NotImplementedError(
                 'Only json, gz, json.gz, zip, and pickle'
                 'are supported as serializers.')
-        
+
         return string
 
-
-    def _set_acl_str(self, public):  
+    def _set_acl_str(self, public):
         """
         Simplified lookup for acl string settings.
         """
-        
+
         return {True: 'public-read', False: 'private'}.get(public)
 
     def _connect_to_bucket(self, **kw):
         """
-        Connect to a pre-existing s3 code. via 
-        kwargs or OS 
+        Connect to a pre-existing s3 code. via
+        kwargs or OS
         """
-        
+
         # get keys from kwargs / environment
         key = kw.get('key', \
             os.getenv('AWS_ACCESS_KEY_ID'))
         secret = kw.get('secret', \
             os.getenv('AWS_SECRET_ACCESS_KEY'))
-        
+
         # check for valid key / secret
         if not key or not secret:
             raise S3AuthError, \
             'You must pass in a "key" and "secret" to s3plz.connect() or set ' \
             '"AWS_ACCESS_KEY_ID" and "AWS_SECRET_ACCESS_KEY" as environment variables.'
-        
+
         try:
             conn = boto.connect_s3(key, secret)
         except Exception as e:
@@ -273,7 +272,7 @@ class S3:
     def _gen_key_from_fp(self, filepath, **kw):
         """
         Take in a filepath and create a `boto.Key` for
-        interacting with the file. Optionally reset serializer too! 
+        interacting with the file. Optionally reset serializer too!
 
         """
         k = Key(self.bucket)
@@ -291,7 +290,7 @@ class S3:
             filepath = filepath.replace(self.s3root, '')
 
         if filepath.startswith('/'):
-            # these can be left straggling 
+            # these can be left straggling
             # by the above conditional
             filepath = filepath[1:]
 
@@ -330,12 +329,10 @@ class S3:
 
     def _delete(self, filepath, **kw):
         """
-        Wrapper for delete. Unnecessary but 
-        Is nice to have for expanding on 
+        Wrapper for delete. Unnecessary but
+        Is nice to have for expanding on
         the core class without writing `boto` code.
         """
         k = self._gen_key_from_fp(filepath, **kw)
         self.bucket.delete_key(k)
         return self._make_abs(str(k.key))
-
-
