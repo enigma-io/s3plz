@@ -111,6 +111,7 @@ def to_gz(s):
     """
     string > gzip
     """
+    assert(isinstance(s, basestring))
     out = cStringIO.StringIO()
     with gzip.GzipFile(fileobj=out, mode="w") as f:
         f.write(s)
@@ -144,6 +145,7 @@ def to_zip(s):
     """
     string > zip
     """
+    assert(isinstance(s, basestring))
     return zlib.compress(s)
 
 

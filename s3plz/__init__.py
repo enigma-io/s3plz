@@ -40,6 +40,20 @@ class S3:
     to and from s3.
     """
 
+    serializers = {
+        'json': utils.to_json,
+        'gz': utils.to_gz,
+        'zip': utils.to_zip,
+        'pickle': utils.to_pickle,
+    }
+
+    deserializers = {
+        'json': utils.from_json,
+        'gz': utils.from_gz,
+        'zip': utils.from_zip,
+        'pickle': utils.from_pickle,
+    }
+
     def __init__(self, uri, **kw):
 
         # get bucket name / abs root.
@@ -163,33 +177,30 @@ class S3:
         If the connection is intialized with 'serializer' set to
         'json.gz', 'json', 'gz', or 'zip', we'll do the
         transformations.
+
+        Any number of serializers can be specified in dot delimited
+        format, and will be applied left to right.
         """
         serializer = kw.get('serializer',  self._serializer)
 
-        if serializer == "json.gz":
-            return utils.to_gz(utils.to_json(obj))
+        # Default is do nothing
+        if serializer is None:
+            return obj
 
-        elif serializer == "json":
-            return utils.to_json(obj)
+        result = obj
+        for name in serializer.split('.'):
+            # Apply dot seperated serializers left to right
+            try:
+                result = self.serializers[name](result)
+            except KeyError:
+                raise NotImplementedError(
+                    '{} is not a supported serializer. Try one of: {}'.format(
+                        name,
+                        ','.join(self.serializers.keys())
+                    )
+                )
 
-        elif serializer == "gz":
-            assert(isinstance(obj, basestring))
-            return utils.to_gz(obj)
-
-        elif serializer == "zip":
-            assert(isinstance(obj, basestring))
-            return utils.to_zip(obj)
-
-        elif serializer == "pickle":
-            return utils.to_pickle(obj)
-
-        elif serializer is not None:
-
-            raise NotImplementedError(
-                'Only json, gz, json.gz, zip, and pickle'
-                'are supported as serializers.')
-
-        return obj
+        return result
 
     def deserialize(self, string, **kw):
         """
@@ -201,32 +212,31 @@ class S3:
         If the connection is intialized with 'serializer' set to
         'json.gz', 'json', 'gz', or 'zip', we'll do the
         transformations.
+
+        Any number of serializers can be specified in dot delimited
+        format, and will be applied right to left.
         """
 
         serializer = kw.get('serializer',  self._serializer)
 
-        if serializer == "json.gz":
-            return utils.from_json(utils.from_gz(string))
+        # Default is do nothing
+        if serializer is None:
+            return string
 
-        elif serializer == "json":
-            return utils.from_json(string)
+        result = string
+        for name in reversed(serializer.split('.')):
+            # Apply dot seperated serializers left to right
+            try:
+                result = self.deserializers[name](result)
+            except KeyError:
+                raise NotImplementedError(
+                    '{} is not a supported deserializer. Try one of: {}'.format(
+                        name,
+                        ','.join(self.deserializers.keys())
+                    )
+                )
 
-        elif serializer == "gz":
-            return utils.from_gz(string)
-
-        elif serializer == "zip":
-            return utils.from_zip(string)
-
-        elif serializer == "pickle":
-            return utils.from_pickle(obj)
-
-        elif serializer is not None:
-
-            raise NotImplementedError(
-                'Only json, gz, json.gz, zip, and pickle'
-                'are supported as serializers.')
-
-        return string
+        return result
 
     def _set_acl_str(self, public):
         """
