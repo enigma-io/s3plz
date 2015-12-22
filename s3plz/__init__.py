@@ -75,10 +75,22 @@ class S3:
         """
         return self._put(data, filepath, **kw)
 
-    def upsert(self, data, filepath, **kw):
+    def create(self, data, filepath, **kw):
         """
         Upload a file if it doesnt already exist,
         otherwise return False
+        """
+        k = self._gen_key_from_fp(filepath, **kw)
+        if not k.exists():
+            return self._put(data, filepath, **kw)
+        else:
+            return False
+
+    def upsert(self, data, filepath, **kw):
+        """
+        Synonym for create, kept for backwards
+        compatibility, can/will eventually be 
+        deprecated in a major version release
         """
         k = self._gen_key_from_fp(filepath, **kw)
         if not k.exists():
