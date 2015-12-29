@@ -92,6 +92,8 @@ class S3:
         compatibility, can/will eventually be 
         deprecated in a major version release
         """
+        warnings.warn("""upsert is a deprecated method kept for backwards compatibility.
+                         please move to `S3.create` for the same functionality""")
         k = self._gen_key_from_fp(filepath, **kw)
         if not k.exists():
             return self._put(data, filepath, **kw)
