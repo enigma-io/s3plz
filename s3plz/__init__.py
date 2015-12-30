@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import os
 import boto
 import boto.s3
+import os
+import utils
+import warnings
+
 from boto.s3.key import Key
 from dateutil import parser
-import utils
 
 
 def connect(uri, **kw):
@@ -89,7 +91,7 @@ class S3:
     def upsert(self, data, filepath, **kw):
         """
         Synonym for create, kept for backwards
-        compatibility, can/will eventually be 
+        compatibility, can/will eventually be
         deprecated in a major version release
         """
         warnings.warn("""upsert is a deprecated method kept for backwards compatibility.
