@@ -286,9 +286,7 @@ class S3:
             "Your supplied credentials were invalid!"
 
         # lookup bucket
-        for b in conn.get_all_buckets():
-            if self.bucket_name == b.name:
-                return b
+        return conn.get_bucket(self.bucket_name)
 
         # bucket doesn't exist.
         raise ValueError(
