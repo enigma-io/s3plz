@@ -4,7 +4,7 @@ from urlparse import urlparse
 from datetime import datetime
 import json
 import gzip
-import zlib
+import zipfile
 import uuid
 import pickle
 import cStringIO
@@ -145,15 +145,19 @@ def to_zip(s):
     """
     string > zip
     """
-    assert(isinstance(s, basestring))
-    return zlib.compress(s)
+    fileobj = cStringIO.StringIO()
+    with zipfile.ZipFile(fileobj, 'w') as f:
+        f.writestr('s3plz.txt', s)
+    return fileobj.getvalue()
 
 
 def from_zip(s):
     """
     zip > string
     """
-    return zlib.decompress(s)
+    zpd = cStringIO.StringIO(s)
+    zpf = zipfile.ZipFile(zpd, "r")
+    return zpf.read(zpf.namelist()[0])
 
 
 def to_pickle(obj):
